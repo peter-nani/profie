@@ -8,9 +8,13 @@ The layout uses Bootstrap 5.3.8 grid and form utilities with a custom design sys
 
 From this directory, regenerate the language pages with `node scripts/build-locales.js`, then run `python3 -m http.server 8000`. Open `http://localhost:8000/en/` (or any supported language route such as `/zh/`, `/ar/`, or `/ko/`) in a browser. The root file is also available at `/`.
 
-## Static deployment
+## GitHub Pages deployment
 
-Publish the repository root to Cloudflare Pages, Netlify, or another static host. `_headers` contains a restrictive starting policy for hosts that support this format. Confirm that the host applies headers and test its CSP against the deployed page. HTTPS and HTTP-to-HTTPS redirects should be enabled by the host.
+This is a static site: GitHub Pages serves the checked-in HTML, CSS, JavaScript, and locale folders. It does not need or use a Python/Node server at runtime. In **Repository Settings → Pages**, choose **Deploy from a branch**, select the branch containing these files, and choose `/(root)` as the folder. The root `index.html`, `.nojekyll`, and all language folders must be in that selected branch and folder. Do not configure a server start command or a backend service. GitHub Pages publishes the static files directly.
+
+The only Node script, `scripts/build-locales.js`, is a build-time helper: run `node scripts/build-locales.js` after translation changes, then commit the generated locale `index.html` files. The deployed site does not execute this script. `_headers` is a Cloudflare Pages configuration file and is ignored by GitHub Pages; it is not needed to render this site.
+
+For Cloudflare Pages, Netlify, or another static host, publish the repository root. `_headers` contains a restrictive starting policy for hosts that support this format. Confirm that the host applies headers and test its CSP against the deployed page. HTTPS and HTTP-to-HTTPS redirects should be enabled by the host.
 
 Before production, replace `YOUR-DOMAIN.example` in `robots.txt` and `sitemap.xml` with the selected canonical HTTPS domain; update canonical, hreflang, and JSON-LD URLs in the route pages to match. Content uses the supplied resume claims, including “10+ years”. The supplied phone number is published as a click-to-call and WhatsApp contact.
 
