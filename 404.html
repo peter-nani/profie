@@ -1,3 +1,26 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#080d14"><title>Page not found | V Prasanna Kumar</title><link rel="stylesheet" href="/styles.css"><link rel="stylesheet" href="/themes.css"></head>
-<body data-theme="midnight"><main class="not-found"><p class="micro-label">404 / ROUTE NOT FOUND</p><h1>This route doesn’t<br><span class="name-accent">exist.</span></h1><p>The page may have moved. Return to the portfolio to continue.</p><a class="btn btn-primary action-primary" href="/en/">Back to portfolio <span aria-hidden="true">↗</span></a></main></body></html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#080d14">
+  <title>Page not found | V Prasanna Kumar</title>
+  <link rel="stylesheet" data-page-style href="styles.css">
+  <link rel="stylesheet" data-page-style href="themes.css">
+  <script>
+    const segments = location.pathname.split('/').filter(Boolean);
+    const account = location.hostname.endsWith('.github.io') ? location.hostname.split('.')[0] : '';
+    const base = account && segments.length && account !== segments[0] ? `/${segments[0]}` : '';
+    document.querySelectorAll('[data-page-style]').forEach(link => { link.href = `${base}/${link.getAttribute('href')}`; });
+  </script>
+</head>
+<body data-theme="midnight">
+  <main class="not-found">
+    <p class="micro-label">404 / ROUTE NOT FOUND</p>
+    <h1>This route doesn’t<br><span class="name-accent">exist.</span></h1>
+    <p>The page may have moved. Return to the portfolio to continue.</p>
+    <a class="btn btn-primary action-primary" data-home-link href="en/">Back to portfolio <span aria-hidden="true">↗</span></a>
+  </main>
+  <script>document.querySelector('[data-home-link]').href = `${base}/en/`;</script>
+</body>
+</html>

@@ -10,6 +10,14 @@
   const validLanguages = Object.keys(copy);
   const validViews = ['signal', 'editorial', 'studio'];
   const titleBase = 'V Prasanna Kumar — Senior Python Developer';
+  const pathSegments = location.pathname.split('/').filter(Boolean);
+  const routeLanguageIndex = pathSegments.findIndex(segment => validLanguages.includes(segment));
+  const isGithubProjectPage = location.hostname.endsWith('.github.io') && pathSegments.length > 0 && location.hostname !== `${pathSegments[0]}.github.io`;
+  const baseSegments = routeLanguageIndex >= 0
+    ? pathSegments.slice(0, routeLanguageIndex)
+    : (isGithubProjectPage ? pathSegments.slice(0, 1) : []);
+  const siteBase = baseSegments.length ? `/${baseSegments.join('/')}` : '';
+  const languageUrl = code => `${siteBase}/${code}/`;
 
   function safelyGet(key) {
     try { return localStorage.getItem(key); } catch { return null; }
@@ -32,11 +40,19 @@
     const description = document.querySelector('meta[name="description"]');
     description.content = `${text.summary} ${text.contactLocation}.`;
     const canonical = document.querySelector('link[rel="canonical"]');
-    if (canonical) canonical.href = `/${code}/`;
+    if (canonical) canonical.href = new URL(languageUrl(code), location.origin).href;
     const ogTitle = document.querySelector('meta[property="og:title"]');
     const ogDescription = document.querySelector('meta[property="og:description"]');
+    const ogUrl = document.querySelector('meta[property="og:url"]');
+    const ogLocale = document.querySelector('meta[property="og:locale"]');
+    const twitterTitle = document.querySelector('meta[name="twitter:title"]');
+    const twitterDescription = document.querySelector('meta[name="twitter:description"]');
     if (ogTitle) ogTitle.content = document.title;
     if (ogDescription) ogDescription.content = text.intro;
+    if (ogUrl) ogUrl.content = new URL(languageUrl(code), location.origin).href;
+    if (ogLocale) ogLocale.content = ({en:'en_IN',hi:'hi_IN',te:'te_IN',zh:'zh_CN',de:'de_DE',ur:'ur_PK',es:'es_ES',pt:'pt_BR',ru:'ru_RU',ar:'ar_SA',fr:'fr_FR',ko:'ko_KR'})[code];
+    if (twitterTitle) twitterTitle.content = document.title;
+    if (twitterDescription) twitterDescription.content = text.intro;
     language.value = code;
     safelySet('profile-language', code);
   }
@@ -61,7 +77,7 @@
 
   language.addEventListener('change', () => {
     setLanguage(language.value);
-    history.replaceState(null, '', `/${language.value}/`);
+    history.replaceState(null, '', languageUrl(language.value));
   });
 
   themeButtons.forEach(button => button.addEventListener('click', () => {
@@ -76,8 +92,9 @@
     history.replaceState(null, '', url);
   });
 
-  const pathLanguage = location.pathname.split('/').filter(Boolean)[0];
+  const pathLanguage = routeLanguageIndex >= 0 ? pathSegments[routeLanguageIndex] : null;
   setLanguage(validLanguages.includes(pathLanguage) ? pathLanguage : (safelyGet('profile-language') || 'en'));
+  if (!pathLanguage) history.replaceState(null, '', languageUrl(language.value));
   setTheme(safelyGet('profile-theme') || html.dataset.theme || 'midnight');
   const requestedView = new URLSearchParams(location.search).get('view');
   setView(validViews.includes(requestedView) ? requestedView : (safelyGet('profile-view') || 'signal'));
